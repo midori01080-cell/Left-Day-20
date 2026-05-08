@@ -1,42 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>MidoRi-LeFt</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Right-Left</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        body {
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
-            background-color: #e6f2ff;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            align-items: center;
+            background-color: #e0f0ff;
+            font-family: system-ui, -apple-system, sans-serif;
         }
         .player-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
             text-align: center;
-            padding: 20px;
         }
         h1 {
+            font-size: 1.8rem;
             color: #333;
-            margin-bottom: 30px;
-            font-size: 22px;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
         }
         audio {
-            width: 80%;
-            max-width: 400px;
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .lyrics-container {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+        .lyrics {
+            transition: transform 0.5s ease;
+        }
+        .lyric-line {
+            line-height: 2.2;
+            font-size: 1rem;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .lyric-line.active {
+            color: #3399ff;
+            font-size: 1.15rem;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="player-container">
         <h1>Left-Day-20</h1>
-        <audio controls>
-            <source src="Left Day 20.m4a" type="audio/mp4">
-            你的浏览器不支持音频播放，请直接复制链接到播放器打开。
+        <audio controls autoplay id="audioPlayer">
+            <source src="你的音频文件名.m4a" type="audio/mp4">
+            你的浏览器不支持音频播放
         
+        <div class="lyrics-container">
+            <div class="lyrics" id="lyricsList">
+                <!-- 这里替换成你的歌词，格式：[分:秒] 歌词内容 -->
+                <div class="lyric-line" data-time="0">（前奏）</div>
+                <div class="lyric-line" data-time="5">示例歌词第一句</div>
+                <div class="lyric-line" data-time="10">示例歌词第二句</div>
+                <div class="lyric-line" data-time="15">示例歌词第三句</div>
+                <div class="lyric-line" data-time="20">示例歌词第四句</div>
+                <div class="lyric-line" data-time="25">（间奏）</div>
+                <div class="lyric-line" data-time="30">示例歌词第五句</div>
+            </div>
+        </div>
     </div>
+
+    <script>
+        const audio = document.getElementById('audioPlayer');
+        const lyricsList = document.getElementById('lyricsList');
+        const lyricLines = document.querySelectorAll('.lyric-line');
+
+        audio.addEventListener('timeupdate', () => {
+            const currentTime = audio.currentTime;
+            let activeIndex = 0;
+
+            // 找到当前时间对应的歌词
+            lyricLines.forEach((line, index) => {
+                const lineTime = parseFloat(line.dataset.time);
+                if (currentTime >= lineTime) {
+                    activeIndex = index;
+                }
+                line.classList.remove('active');
+            });
+
+            // 高亮当前歌词
+            lyricLines[activeIndex].classList.add('active');
+
+            // 滚动歌词，让当前行居中
+            const lineHeight = lyricLines[0].offsetHeight;
+            const scrollTop = activeIndex * lineHeight - (180 / 2 - lineHeight / 2);
+            lyricsList.style.transform = `translateY(-${scrollTop}px)`;
+        });
+    </script>
 </body>
 </html>
